@@ -668,4 +668,29 @@ if (process.platform === 'linux') {
   };
 }
 
+// Translate only visible schema metadata, never config keys or stored values.
+const coreGreek = require('./config-translations-el.json');
+function schemaLocale() {
+  const locale = (typeof navigator !== 'undefined' && navigator.language) ||
+    ((typeof process !== 'undefined' && process.env && process.env.LANG) || 'en');
+  return /^el(?:[-_]|$)/i.test(locale);
+}
+function translateSchema(node) {
+  if (!node || typeof node !== 'object') return;
+  for (const key of ['title', 'description']) {
+    if (typeof node[key] === 'string' && Object.prototype.hasOwnProperty.call(coreGreek, node[key])) {
+      node[key] = coreGreek[node[key]];
+    }
+  }
+  if (node.properties) {
+    Object.keys(node.properties).forEach(key => translateSchema(node.properties[key]));
+  }
+  if (node.items && typeof node.items === 'object') translateSchema(node.items);
+  if (Array.isArray(node.enum)) {
+    node.enum.forEach(item => {
+      if (item && typeof item === 'object') translateSchema(item);
+    });
+  }
+}
+if (schemaLocale()) translateSchema(configSchema);
 module.exports = configSchema;
