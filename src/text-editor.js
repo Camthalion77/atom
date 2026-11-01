@@ -1376,7 +1376,7 @@ module.exports = class TextEditor {
   //
   // Returns a {String}.
   getTitle() {
-    return this.getFileName() || 'untitled';
+    return this.getFileName() || (/^el(?:[-_]|$)/i.test((typeof navigator !== 'undefined' && navigator.language) || 'en') ? 'χωρίς τίτλο' : 'untitled');
   }
 
   // Essential: Get unique title for display in other parts of the UI, such as

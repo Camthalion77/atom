@@ -72,4 +72,4 @@ function install(root) {
   observer.observe(root, {subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['title','placeholder','aria-label']});
   return observer;
 }
-module.exports = {install, translate, words};
+module.exports = {install, translate, words, greek};
