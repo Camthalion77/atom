@@ -1,0 +1,102 @@
+name: Atom Intel macOS build
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build Atom x86_64
+    runs-on: macos-15-intel
+    timeout-minutes: 90
+    env:
+      npm_config_arch: x64
+      npm_config_target_arch: x64
+      CFLAGS: '-include stdio.h'
+      CXXFLAGS: '-include ${{ github.workspace }}/script/compat/legacy-iconv-macos.h'
+    steps:
+      - name: Check out master without checkout action
+        run: |
+          git init .
+          git remote add origin https://github.com/Camthalion77/atom.git
+          git fetch --depth=1 origin master
+          git checkout -B master FETCH_HEAD
+
+      - name: Install original Atom Node.js version
+        uses: actions/setup-node@v4
+        with:
+          node-version: '12.16.3'
+
+      - name: Print environment
+        run: |
+          sw_vers
+          uname -m
+          xcodebuild -version
+          node --version
+          npm --version
+          python3 --version
+
+      - name: Set up compatible Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Configure legacy node-gyp
+        run: |
+          echo "npm_config_python=$(command -v python3)" >> "$GITHUB_ENV"
+          python3 --version
+
+      - name: Preflight localized JSX
+        run: python3 script/compat/check-localized-jsx.py
+
+      - name: Preflight build script syntax
+        run: node --check script/lib/package-application.js
+
+      - name: Bootstrap original Atom dependencies
+        run: ./script/bootstrap --ci
+
+      - name: Upload bootstrap diagnostic logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: atom-bootstrap-logs
+          path: |
+            ~/.atom/.apm/_logs/
+            ~/.npm/_logs/
+          if-no-files-found: warn
+
+      - name: Apply Settings Greek localization
+        run: python3 script/compat/patch-settings-view.py
+
+      - name: Build unsigned Intel app
+        run: ./script/build --no-bootstrap
+
+      - name: Finalize Greek and English macOS names
+        run: python3 script/compat/finalize-macos-locales.py
+
+      - name: Find and package Atom app
+        run: |
+          APP="$(find out -maxdepth 1 -name 'Atom*.app' -type d -print -quit)"
+          test -d "$APP" || { echo "App not found"; exit 1; }
+
+          EXEC=$(/usr/libexec/PlistBuddy -c             "Print CFBundleExecutable" "$APP/Contents/Info.plist")
+
+          echo "Application: $APP"
+          echo "Executable: $EXEC"
+
+          file "$APP/Contents/MacOS/$EXEC"
+          lipo -archs "$APP/Contents/MacOS/$EXEC" | grep -w x86_64
+
+          ditto -c -k --sequesterRsrc --keepParent             "$APP" Atom-Intel-unsigned.zip
+
+          ls -lh Atom-Intel-unsigned.zip
+
+      - name: Upload unsigned Intel build
+        uses: actions/upload-artifact@v4
+        with:
+          name: Atom-Intel-unsigned
+          path: Atom-Intel-unsigned.zip
+          if-no-files-found: error
+          retention-days: 14

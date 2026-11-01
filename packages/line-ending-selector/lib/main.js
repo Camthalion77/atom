@@ -5,6 +5,7 @@ import { CompositeDisposable, Disposable } from 'atom';
 import { Selector } from './selector';
 import StatusBarItem from './status-bar-item';
 import helpers from './helpers';
+const { tr } = require('../../../src/greek-ui');
 
 const LineEndingRegExp = /\r\n|\n/g;
 
@@ -104,7 +105,7 @@ export function consumeStatusBar(statusBar) {
       }
       tooltipDisposable = atom.tooltips.add(statusBarItem.element, {
         title() {
-          return `File uses ${statusBarItem.description()} line endings`;
+          return require('../../../src/greek-ui').tr('File uses {name} line endings').replace('{name}', statusBarItem.description());
         }
       });
       disposables.add(tooltipDisposable);

@@ -2,6 +2,7 @@
 /** @jsx etch.dom */
 
 import etch from 'etch';
+const { tr } = require('../../../src/greek-ui');
 
 import VIEW_URI from './view-uri';
 const REBUILDING = 'rebuilding';
@@ -41,7 +42,7 @@ export default class IncompatiblePackagesComponent {
 
   render() {
     if (!this.loaded) {
-      return <div className="incompatible-packages padded">Loading...</div>;
+      return <div className="incompatible-packages padded">{tr('Loading...')}</div>;
     }
 
     return (
@@ -66,7 +67,7 @@ export default class IncompatiblePackagesComponent {
         return (
           <div className={'alert icon ' + alertClass}>
             {this.rebuiltPackageCount} of {this.incompatiblePackages.length}{' '}
-            packages were rebuilt successfully. Reload Atom to activate them.
+            {tr('packages were rebuilt successfully. Reload Atom to activate them.')}
             <button ref="reloadButton" className="btn pull-right">
               Reload Atom
             </button>
@@ -75,14 +76,13 @@ export default class IncompatiblePackagesComponent {
       } else {
         return (
           <div className="alert alert-danger icon icon-bug">
-            Some installed packages could not be loaded because they contain
-            native modules that were compiled for an earlier version of Atom.
+            {tr('Some installed packages could not be loaded because they contain native modules that were compiled for an earlier version of Atom.')}
             <button
               ref="rebuildButton"
               className="btn pull-right"
               disabled={this.rebuildInProgress}
             >
-              Rebuild Packages
+              {tr('Rebuild Packages')}
             </button>
           </div>
         );
@@ -90,7 +90,7 @@ export default class IncompatiblePackagesComponent {
     } else {
       return (
         <div className="alert alert-success icon icon-check">
-          None of your packages contain incompatible native modules.
+          {tr('None of your packages contain incompatible native modules.')}
         </div>
       );
     }
@@ -116,7 +116,7 @@ export default class IncompatiblePackagesComponent {
           className="btn view-settings icon icon-gear pull-right"
           package={pack}
         >
-          Package Settings
+          {tr('Package Settings')}
         </button>
         <h4 className="heading">
           {pack.name} {pack.metadata.version}
@@ -132,19 +132,19 @@ export default class IncompatiblePackagesComponent {
     if (rebuildStatus === REBUILDING) {
       return (
         <div className="badge badge-info pull-right icon icon-gear">
-          Rebuilding
+          {tr('Rebuilding')}
         </div>
       );
     } else if (rebuildStatus === REBUILD_SUCCEEDED) {
       return (
         <div className="badge badge-success pull-right icon icon-check">
-          Rebuild Succeeded
+          {tr('Rebuild Succeeded')}
         </div>
       );
     } else if (rebuildStatus === REBUILD_FAILED) {
       return (
         <div className="badge badge-error pull-right icon icon-x">
-          Rebuild Failed
+          {tr('Rebuild Failed')}
         </div>
       );
     } else {
@@ -222,7 +222,7 @@ export default class IncompatiblePackagesComponent {
   }
 
   getTitle() {
-    return 'Incompatible Packages';
+    return tr('Incompatible Packages');
   }
 
   getURI() {

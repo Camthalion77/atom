@@ -99,7 +99,7 @@ class GoToLineView {
     this.storeFocusedElement();
     this.panel.show();
     this.message.textContent =
-      'Enter a <row> or <row>:<column> to go there. Examples: "3" for row 3 or "2:7" for row 2 and column 7';
+      (require('../../../src/greek-ui').tr('Enter a <row> or <row>:<column> to go there. Examples: "3" for row 3 or "2:7" for row 2 and column 7'));
     this.miniEditor.element.focus();
   }
 }

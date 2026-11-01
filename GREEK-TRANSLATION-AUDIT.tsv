@@ -1,0 +1,9 @@
+File	Line	Original UI text
+packages/about/lib/components/about-status-bar.js	14	An update will be installed the next time Atom is relaunched.<br/><br/>Click the squirrel icon for more information.
+packages/deprecation-cop/lib/deprecation-cop-status-bar-view.coffee	63	#{_.pluralize(length, 
+packages/dev-live-reload/spec/async-spec-helpers.js	5	anonymous condition
+packages/exception-reporting/lib/reporter.js	183	Are you willing to submit this information to a private server for debugging purposes?
+packages/link/menus/link.cson	3	Open link
+packages/update-package-dependencies/lib/update-package-dependencies-status-view.js	22	Updating package dependencies\u2026
+packages/welcome/lib/consent-view.js	16	atom.io
+packages/welcome/lib/consent-view.js	115	GitHub

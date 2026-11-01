@@ -1,4 +1,5 @@
 const { Disposable } = require('atom');
+const { tr } = require('../../../src/greek-ui');
 
 module.exports = class GrammarStatusView {
   constructor(statusBar) {
@@ -94,7 +95,7 @@ module.exports = class GrammarStatusView {
       if (grammar) {
         let grammarName = null;
         if (grammar === atom.grammars.nullGrammar) {
-          grammarName = 'Plain Text';
+          grammarName = require('../../../src/greek-ui').tr('Plain Text');
         } else {
           grammarName = grammar.name || grammar.scopeName;
         }
@@ -104,7 +105,7 @@ module.exports = class GrammarStatusView {
         this.element.style.display = '';
 
         this.tooltip = atom.tooltips.add(this.element, {
-          title: `File uses the ${grammarName} grammar`
+          title: require('../../../src/greek-ui').tr('File uses the {name} grammar').replace('{name}', grammarName)
         });
       } else {
         this.element.style.display = 'none';

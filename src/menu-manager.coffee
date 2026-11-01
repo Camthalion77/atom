@@ -7,6 +7,7 @@ fs = require 'fs-plus'
 {Disposable} = require 'event-kit'
 
 MenuHelpers = require './menu-helpers'
+translateMenu = require './menu-localization'
 
 platformMenu = require('../package.json')?._atomMenu?.menu
 
@@ -171,7 +172,7 @@ class MenuManager
         keystrokesByCommand[binding.command] ?= []
         keystrokesByCommand[binding.command].unshift binding.keystrokes
 
-      @sendToBrowserProcess(@template, keystrokesByCommand)
+      @sendToBrowserProcess(translateMenu(@template), keystrokesByCommand)
     , 1)
 
   loadPlatformItems: ->

@@ -66,6 +66,13 @@ module.exports = function() {
         'Resources'
       );
       setAtomHelperVersion(packagedAppPath);
+      // Only English and Greek app-name localizations are bundled.
+      for (const language of ['en', 'el']) {
+        fs.copySync(
+          path.join(CONFIG.repositoryRootPath, 'resources', 'mac', `${language}.lproj`),
+          path.join(bundledResourcesPath, `${language}.lproj`)
+        );
+      }
     } else if (process.platform === 'linux') {
       bundledResourcesPath = path.join(packagedAppPath, 'resources');
       chmodNodeFiles(packagedAppPath);
@@ -167,16 +174,16 @@ function setAtomHelperVersion(packagedAppPath) {
     'Info.plist'
   );
   console.log(`Setting Atom Helper Version for ${helperPListPath}`);
-  spawnSync('/usr/libexec/PlistBuddy', [
-    '-c',
-    `Add CFBundleVersion string ${CONFIG.appMetadata.version}`,
-    helperPListPath
-  ]);
-  spawnSync('/usr/libexec/PlistBuddy', [
-    '-c',
-    `Add CFBundleShortVersionString string ${CONFIG.appMetadata.version}`,
-    helperPListPath
-  ]);
+  const version = CONFIG.appMetadata.version;
+  for (const key of ['CFBundleVersion', 'CFBundleShortVersionString']) {
+    const probe = childProcess.spawnSync('/usr/libexec/PlistBuddy', [
+      '-c', `Print :${key}`, helperPListPath
+    ]);
+    spawnSync('/usr/libexec/PlistBuddy', [
+      '-c', `${probe.status === 0 ? 'Set' : 'Add'} :${key} ${probe.status === 0 ? '' : 'string '}${version}`,
+      helperPListPath
+    ]);
+  }
 }
 
 function chmodNodeFiles(packagedAppPath) {

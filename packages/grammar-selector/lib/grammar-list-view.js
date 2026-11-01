@@ -2,7 +2,7 @@ const SelectListView = require('atom-select-list');
 
 module.exports = class GrammarListView {
   constructor() {
-    this.autoDetect = { name: 'Auto Detect' };
+    this.autoDetect = { name: require('../../../src/greek-ui').tr('Auto Detect') };
     this.selectListView = new SelectListView({
       itemsClassList: ['mark-active'],
       items: [],
@@ -29,7 +29,7 @@ module.exports = class GrammarListView {
           parser.textContent = 'Tree-sitter';
           parser.setAttribute(
             'title',
-            '(Recommended) A faster parser with improved syntax highlighting & code navigation support.'
+            require('../../../src/greek-ui').tr('(Recommended) A faster parser with improved syntax highlighting & code navigation support.')
           );
           div.appendChild(parser);
         }

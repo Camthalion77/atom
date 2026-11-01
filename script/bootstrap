@@ -35,6 +35,34 @@ if (process.platform === 'win32') deleteMsbuildFromPath()
 
 installScriptDependencies(ci)
 installApm(ci)
+
+// Compatibility with modern Electron header distribution.
+const fs = require('fs');
+const path = require('path');
+let replacements = 0;
+
+function fixElectronHeaders(dir) {
+  for (const entry of fs.readdirSync(dir, {withFileTypes: true})) {
+    const file = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      fixElectronHeaders(file);
+    } else if (entry.isFile() && /\.(js|json|coffee)$/.test(entry.name)) {
+      const old = fs.readFileSync(file, 'utf8');
+      const updated = old.replace(
+        /https:\/\/atom\.io\/download\/electron/g,
+        'https://electronjs.org/headers'
+      );
+      if (updated !== old) {
+        fs.writeFileSync(file, updated);
+        replacements++;
+      }
+    }
+  }
+}
+
+fixElectronHeaders(path.join(__dirname, '..', 'apm', 'node_modules', 'atom-package-manager'));
+console.log('Electron header URL files patched:', replacements);
+
 const apmVersionEnv = Object.assign({}, process.env);
 // Set resource path so that apm can load Atom's version.
 apmVersionEnv.ATOM_RESOURCE_PATH = CONFIG.repositoryRootPath;
