@@ -65,7 +65,9 @@ export default class WelcomePackage {
       this.reporterProxy.sendEvent('show-on-initial-load');
     }
 
-    if (atom.config.get('welcome.showSunsettingOnStartup')) {
+    // Atom 2.0 fork: retain historical page for manual access only.
+    // Do not automatically open the 2022 sunset announcement.
+    if (false && atom.config.get('welcome.showSunsettingOnStartup')) {
       await this.showSunsetting();
       this.reporterProxy.sendEvent('show-sunsetting-on-initial-load');
     }

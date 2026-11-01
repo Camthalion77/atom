@@ -84,9 +84,7 @@ let UpdateManager = class UpdateManager {
   }
 
   resetState() {
-    this.state = atom.autoUpdater.platformSupportsUpdates()
-      ? atom.autoUpdater.getState()
-      : Unsupported;
+    this.state = Unsupported;
     this.emitDidChange();
   }
 
@@ -107,7 +105,9 @@ let UpdateManager = class UpdateManager {
   }
 
   checkForUpdate() {
-    atom.autoUpdater.checkForUpdate();
+    // The original Atom updater targets retired release infrastructure.
+    // This fork does not contact it.
+    this.setState(Unsupported);
   }
 
   restartAndInstallUpdate() {
