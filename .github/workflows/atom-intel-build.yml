@@ -54,6 +54,9 @@ jobs:
       - name: Preflight build script syntax
         run: node --check script/lib/package-application.js
 
+      - name: Preflight bilingual UI source
+        run: node --check src/ui-localization.js
+
       - name: Bootstrap original Atom dependencies
         run: ./script/bootstrap --ci
 

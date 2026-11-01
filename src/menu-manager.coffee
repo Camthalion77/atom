@@ -71,6 +71,7 @@ class MenuManager
     @keymapManager.onDidReloadKeymap => @update()
     @update()
     @initialized = true
+    require('./ui-localization').install()
 
   # Public: Adds the given items to the application menu.
   #
